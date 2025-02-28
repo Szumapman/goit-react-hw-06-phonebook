@@ -1,12 +1,17 @@
-import React from 'react';
 import css from './Filter.module.css';
+import { useSelector } from 'react-redux';
+import { getFilter } from '../redux/selectors';
+import { useDispatch } from 'react-redux';
+import { setFilter } from '../redux/filterSlice';
 
-interface FilterProps {
-    filter: string;
-    onFilterChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}
 
-export const Filter: React.FC<FilterProps> = ({ filter, onFilterChange }) => {
+export const Filter = () => {
+    const filter = useSelector(getFilter)
+    const dispach = useDispatch();
+    const onFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        dispach(setFilter(event.target.value));
+    }
+
     return (
         <div className={css.filter}>
             <label htmlFor="filter">Find contacts by name</label>
