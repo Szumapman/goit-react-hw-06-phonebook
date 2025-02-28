@@ -1,16 +1,17 @@
 import React from 'react';
 import { Input } from "./Input";
 import { Contact } from "../types/Contact";
-import { nanoid } from "nanoid";
+import { useDispatch, useSelector } from 'react-redux';
+import { getContacts } from '../redux/selectors';
+import { addContact } from '../redux/contactsSlice';
 import  css from "./ContactForm.module.css";
 
-type ContactFormProps = {
-  contacts: Contact[];
-  onAddContact: (contact: Contact) => void;
-};
 
 
-export const ContactForm = ({ contacts, onAddContact }: ContactFormProps) => {
+export const ContactForm = () => {
+  const dispach = useDispatch();
+  const contacts = useSelector(getContacts);
+
   const namePattern = /^[a-zA-Z\u0400-\u04FF]+(([' \-][a-zA-Z\u0400-\u04FF ])?[a-zA-Z\u0400-\u04FF]*)*$/;
   const numberPattern = /\(?\+?\d{1,4}?\)?[\-.\s]?\(?\d{1,3}?\)?[\-.\s]?\d{1,4}[\-.\s]?\d{1,4}[\-.\s]?\d{1,9}/;
   const nameString = "Name";
@@ -24,17 +25,13 @@ export const ContactForm = ({ contacts, onAddContact }: ContactFormProps) => {
     const name = newName.trim().toLowerCase();
     const number = newPhone.trim();
 
-    if (contacts.some((contact) => contact.name.toLowerCase() === name)) {
+    if (contacts.some((contact: Contact) => contact.name.toLowerCase() === name)) {
       alert(`${name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')} is already in contacts`);
       return;
     }
 
-    const contact = {
-        id: nanoid(),
-        name,
-        number,
-      };
-    onAddContact(contact);
+    dispach(addContact({ name, number }));
+
     event.currentTarget.reset();
   };
 
